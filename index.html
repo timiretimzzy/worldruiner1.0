@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORLD RUINER 3000 PRO MAX - Make Everything Worse</title>
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b1020;
+            --fg: #f7f7f7;
+            --accent: #ff4d4d;
+            --secondary: #4d79ff;
+            --warning: #ffb84d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--bg) 0%, #1a1f2e 100%);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Glitch scanlines overlay */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.3) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.3;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--warning));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 77, 77, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            color: #9aa8b2;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Stats panel */
+        .stats {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #9aa8b2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* MAIN BUTTON - The star of the show */
+        .main-button-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        #ruinBtn {
+            background: linear-gradient(45deg, var(--accent), #ff6b6b);
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            padding: 2rem 4rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 
+                0 0 50px rgba(255, 77, 77, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #ruinBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 80px rgba(255, 77, 77, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        #ruinBtn:active {
+            transform: scale(0.95);
+        }
+
+        .button-pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(255, 77, 77, 0.2) 70%);
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--secondary), #6b8bff);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, var(--warning), #ffcc4d);
+        }
+
+        /* Effects log */
+        .effects-log {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 2rem;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--warning);
+            font-size: 0.8rem;
+        }
+
+        .log-message {
+            color: white;
+        }
+
+        /* Ticker */
+        .ticker-container {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        #ticker {
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+            color: #9fe7ff;
+            font-weight: bold;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Right panel - Ranks & Leaderboard */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .rank-display {
+            background: linear-gradient(135deg, rgba(255, 77, 77, 0.1), rgba(77, 121, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .current-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+
+        .next-rank {
+            font-size: 0.9rem;
+            color: #9aa8b2;
+        }
+
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .leaderboard h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        /* Easter eggs */
+        .dinosaur {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 100;
+            pointer-events: none;
+            animation: dinoWalk 20s linear;
+        }
+
+        @keyframes dinoWalk {
+            0% { transform: translateX(-100px) translateY(0); }
+            50% { transform: translateX(calc(50vw - 50px)) translateY(-20px); }
+            100% { transform: translateX(calc(100vw + 100px)) translateY(0); }
+        }
+
+        .bill {
+            position: fixed;
+            background: white;
+            color: black;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            animation: billFall 5s ease-in;
+        }
+
+        @keyframes billFall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            #ruinBtn {
+                font-size: 2rem;
+                padding: 1.5rem 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌍 WORLD RUINER 3000 PRO MAX 🌍</h1>
+            <div class="tagline">Make everything slightly worse, one dramatic click at a time</div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="clickCount">0</div>
+                    <div class="stat-label">Global Clicks</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="regretScore">0</div>
+                    <div class="stat-label">Regret Score</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="timeActive">0s</div>
+                    <div class="stat-label">Time Ruining</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <!-- Main Button -->
+            <div class="main-button-container">
+                <div class="button-pulse"></div>
+                <button id="ruinBtn">
+                    <i class="fas fa-bomb"></i> RUIN EVERYTHING <i class="fas fa-bomb"></i>
+                </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <button class="btn btn-primary" id="evidenceBtn">
+                    <i class="fas fa-camera"></i> Generate Evidence
+                </button>
+                <button class="btn" id="shareBtn">
+                    <i class="fas fa-share-alt"></i> Share Chaos
+                </button>
+                <button class="btn" id="leaderboardBtn">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </button>
+                <button class="btn btn-warning" id="resetBtn">
+                    <i class="fas fa-undo"></i> Undo (Coward)
+                </button>
+                <button class="btn" id="easterEggBtn" style="display: none;">
+                    <i class="fas fa-egg"></i> Secret Mode
+                </button>
+            </div>
+
+            <!-- News Ticker -->
+            <div class="ticker-container">
+                <div id="ticker">WORLD STATUS: NOMINAL • REGRET LEVEL: MINIMAL • CLICK THE BUTTON TO BEGIN THE CHAOS •</div>
+            </div>
+
+            <!-- Effects Log -->
+            <div class="effects-log" id="effectsLog">
+                <div class="log-entry">
+                    <span class="log-time">[SYSTEM]</span>
+                    <span class="log-message">World Ruiner 3000 PRO MAX initialized. Ready to ruin.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Current Rank -->
+            <div class="rank-display">
+                <div class="current-rank" id="currentRank">Dust Mote</div>
+                <div class="next-rank" id="nextRank">Next: Static Noise (3 clicks)</div>
+                <div class="rank-progress">
+                    <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 2.5px; margin-top: 1rem;">
+                        <div id="rankProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--warning)); border-radius: 2.5px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard">
+                <h3><i class="fas fa-trophy"></i> HALL OF SHAME</h3>
+                <div id="leaderboardList">
+                    <div class="leaderboard-entry">
+                        <span>🤴 You</span>
+                        <span id="userScore">0 clicks</span>
+                    </div>
+                    <div class="leaderboard-entry">
+                        <span>🥇 God of Chaos</span>
+                        <span>999 clicks</span>
+                    </div>
+                    <div class="leaderboard-entry">
+                        <span>🥈 Professional Ruiner</span>
+                        <span>420 clicks</span>
+                    </div>
+                    <div class="leaderboard-entry">
+                        <span>🥉 Mild Inconvenience</span>
+                        <span>69 clicks</span>
+                    </div>
+                </div>
+                <button class="btn" id="submitScoreBtn" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-upload"></i> Submit Your Score
+                </button>
+            </div>
+
+            <!-- Special Effects -->
+            <div class="special-effects">
+                <h3 style="color: var(--warning); margin-bottom: 1rem;">Special Effects Unlocked</h3>
+                <div id="unlockedEffects">
+                    <div class="btn" style="width: 100%; margin-bottom: 0.5rem; justify-content: center;">
+                        <i class="fas fa-lock"></i> Dinosaurs (10 clicks)
+                    </div>
+                    <div class="btn" style="width: 100%; margin-bottom: 0.5rem; justify-content: center;">
+                        <i class="fas fa-lock"></i> Economic Collapse (25 clicks)
+                    </div>
+                    <div class="btn" style="width: 100%; margin-bottom: 0.5rem; justify-content: center;">
+                        <i class="fas fa-lock"></i> Time Paradox (50 clicks)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="evidenceModal">
+        <div class="modal-content">
+            <h2>📸 EVIDENCE GENERATED</h2>
+            <p>Your world-ruining evidence has been captured and downloaded!</p>
+            <p>Share your chaos with the world:</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin: 1.5rem 0;">
+                <button class="btn btn-primary" onclick="shareToTwitter()">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="btn" style="background: #5865F2;" onclick="copyShareText()">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+            </div>
+            <button class="btn" onclick="closeModal('evidenceModal')">Continue Ruining</button>
+        </div>
+    </div>
+
+    <div class="modal" id="leaderboardModal">
+        <div class="modal-content">
+            <h2>🏆 GLOBAL LEADERBOARD</h2>
+            <div id="globalLeaderboard" style="text-align: left; margin: 1.5rem 0;">
+                <!-- Filled by JS -->
+            </div>
+            <button class="btn" onclick="closeModal('leaderboardModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Audio for effects (optional) -->
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+    <audio id="explosionSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bomb-explosion-2800.mp3" preload="auto"></audio>
+
+    <script>
+        // ========== STATE ==========
+        let clicks = 0;
+        let regretScore = 0;
+        let startTime = Date.now();
+        let unlockedEffects = [];
+        let easterEggUnlocked = false;
+
+        // Ranks with thresholds and descriptions
+        const ranks = [
+            { clicks: 0, name: "Dust Mote", description: "Barely noticeable" },
+            { clicks: 3, name: "Static Noise", description: "Annoying but ignorable" },
+            { clicks: 7, name: "Glitched Cursor", description: "Mildly inconvenient" },
+            { clicks: 12, name: "Minor Inconvenience", description: "Slightly bothersome" },
+            { clicks: 20, name: "Localized Panic", description: "Causing regional concern" },
+            { clicks: 30, name: "Pothole of Destiny", description: "Infrastructure suffers" },
+            { clicks: 45, name: "Meme Storm Conductor", description: "Viral chaos unleashed" },
+            { clicks: 65, name: "Digital Sneeze", description: "Network disruption" },
+            { clicks: 85, name: "Economy Shrugger", description: "Markets tremble" },
+            { clicks: 110, name: "Actual Regret", description: "This was a mistake" },
+            { clicks: 150, name: "Temporal Anomaly", description: "Time itself complains" },
+            { clicks: 200, name: "Absolute Zero", description: "Complete cosmic annoyance" }
+        ];
+
+        // Special effects with click thresholds
+        const specialEffects = [
+            { clicks: 10, name: "Dinosaurs", unlocked: false, action: spawnDinosaur },
+            { clicks: 25, name: "Economic Collapse", unlocked: false, action: economicCollapse },
+            { clicks: 50, name: "Time Paradox", unlocked: false, action: timeParadox },
+            { clicks: 75, name: "Zombie Apocalypse", unlocked: false, action: zombieApocalypse },
+            { clicks: 100, name: "Alien Invasion", unlocked: false, action: alienInvasion }
+        ];
+
+        // ========== DOM ELEMENTS ==========
+        const ruinBtn = document.getElementById('ruinBtn');
+        const clickCountEl = document.getElementById('clickCount');
+        const regretScoreEl = document.getElementById('regretScore');
+        const timeActiveEl = document.getElementById('timeActive');
+        const effectsLog = document.getElementById('effectsLog');
+        const ticker = document.getElementById('ticker');
+        const currentRankEl = document.getElementById('currentRank');
+        const nextRankEl = document.getElementById('nextRank');
+        const rankProgressBar = document.getElementById('rankProgressBar');
+        const userScoreEl = document.getElementById('userScore');
+
+        // ========== INITIALIZATION ==========
+        function init() {
+            // Load saved state
+            const saved = localStorage.getItem('worldRuinerState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                clicks = state.clicks || 0;
+                regretScore = state.regretScore || 0;
+                unlockedEffects = state.unlockedEffects || [];
+                easterEggUnlocked = state.easterEggUnlocked || false;
+            }
+
+            updateUI();
+            startTimer();
+            
+            // Easter egg: Secret button combo
+            let konamiCode = [];
+            const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+            document.addEventListener('keydown', (e) => {
+                konamiCode.push(e.key);
+                if (konamiCode.length > konamiSequence.length) {
+                    konamiCode.shift();
+                }
+                if (konamiCode.join(',') === konamiSequence.join(',')) {
+                    unlockEasterEgg();
+                }
+            });
+
+            // Check for URL parameters for "ruin a friend" feature
+            const urlParams = new URLSearchParams(window.location.search);
+            const presetClicks = urlParams.get('clicks');
+            if (presetClicks && !isNaN(presetClicks)) {
+                clicks = parseInt(presetClicks);
+                addLogEntry(`Friend sent you ${clicks} pre-loaded clicks of chaos!`, 'warning');
+                updateUI();
+            }
+        }
+
+        // ========== MAIN RUIN FUNCTION ==========
+        function ruinEverything() {
+            clicks++;
+            regretScore += Math.floor(Math.random() * 10) + 1;
+            
+            // Play sound
+            try {
+                if (clicks % 5 === 0) {
+                    document.getElementById('explosionSound').currentTime = 0;
+                    document.getElementById('explosionSound').play();
+                } else {
+                    document.getElementById('clickSound').currentTime = 0;
+                    document.getElementById('clickSound').play();
+                }
+            } catch (e) { /* Silently fail if audio not allowed */ }
+            
+            // Visual feedback
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 500);
+            
+            // Confetti for milestones
+            if (clicks % 25 === 0) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+            
+            // Add log entry
+            const messages = [
+                `Global stability decreased by ${Math.floor(Math.random() * 100)}%`,
+                `One penguin questioned its life choices`,
+                `Stock market experienced a "vibe shift"`,
+                `A minor deity facepalmed somewhere`,
+                `CSS cried itself to sleep`,
+                `Internet slowed by 0.0001%`,
+                `Someone's toast burned slightly more`,
+                `A cloud took offense and left`
+            ];
+            addLogEntry(messages[Math.floor(Math.random() * messages.length)]);
+            
+            // Update ticker with dramatic news
+            const newsItems = [
+                `BREAKING: Chaos level increased to ${clicks}`,
+                `ALERT: Regret saturation at ${regretScore}%`,
+                `NEWS: Another click, another problem`,
+                `UPDATE: World becoming incrementally worse`,
+                `WARNING: Button press detected`
+            ];
+            ticker.textContent = `${newsItems[Math.floor(Math.random() * newsItems.length)]} • ` + ticker.textContent;
+            
+            // Check for special effects unlock
+            checkSpecialEffects();
+            
+            // Update UI
+            updateUI();
+            
+            // Save state
+            saveState();
+        }
+
+        // ========== SPECIAL EFFECTS ==========
+        function checkSpecialEffects() {
+            specialEffects.forEach(effect => {
+                if (clicks >= effect.clicks && !effect.unlocked) {
+                    effect.unlocked = true;
+                    unlockedEffects.push(effect.name);
+                    effect.action();
+                    
+                    // Update unlocked effects display
+                    const effectBtn = document.querySelector(`#unlockedEffects .btn:nth-child(${specialEffects.indexOf(effect) + 1})`);
+                    if (effectBtn) {
+                        effectBtn.innerHTML = `<i class="fas fa-check"></i> ${effect.name} (UNLOCKED)`;
+                        effectBtn.style.background = 'rgba(77, 121, 255, 0.2)';
+                    }
+                    
+                    addLogEntry(`✨ UNLOCKED: ${effect.name.toUpperCase()} ✨`, 'warning');
+                }
+            });
+        }
+
+        function spawnDinosaur() {
+            const dino = document.createElement('div');
+            dino.className = 'dinosaur';
+            dino.innerHTML = '🦖';
+            dino.style.top = `${Math.random() * 80 + 10}%`;
+            document.body.appendChild(dino);
+            
+            setTimeout(() => {
+                dino.remove();
+            }, 20000);
+        }
+
+        function economicCollapse() {
+            // Spawn falling "bills"
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const bill = document.createElement('div');
+                    bill.className = 'bill';
+                    bill.innerHTML = '💸 BILL FROM ANTARCTICA<br>$' + (Math.random() * 1000).toFixed(2);
+                    bill.style.left = `${Math.random() * 80 + 10}%`;
+                    document.body.appendChild(bill);
+                    
+                    setTimeout(() => {
+                        bill.remove();
+                    }, 5000);
+                }, i * 500);
+            }
+            
+            addLogEntry('📉 ECONOMIC COLLAPSE: Antarctica sent you a bill!', 'warning');
+        }
+
+        function timeParadox() {
+            document.body.classList.add('glitch');
+            setTimeout(() => {
+                document.body.classList.remove('glitch');
+            }, 3000);
+            
+            // Reverse timer briefly
+            const originalTime = Date.now() - startTime;
+            startTime = Date.now() + 5000; // Add 5 seconds "paradox time"
+            setTimeout(() => {
+                startTime = Date.now() - originalTime;
+            }, 1000);
+        }
+
+        function zombieApocalypse() {
+            for (let i = 0; i < 3; i++) {
+                const zombie = document.createElement('div');
+                zombie.className = 'dinosaur';
+                zombie.innerHTML = '🧟';
+                zombie.style.top = `${Math.random() * 80 + 10}%`;
+                zombie.style.animationDuration = `${15 + Math.random() * 10}s`;
+                document.body.appendChild(zombie);
+                
+                setTimeout(() => {
+                    zombie.remove();
+                }, 25000);
+            }
+        }
+
+        function alienInvasion() {
+            const invasion = document.createElement('div');
+            invasion.style.position = 'fixed';
+            invasion.style.top = '50%';
+            invasion.style.left = '50%';
+            invasion.style.transform = 'translate(-50%, -50%)';
+            invasion.style.zIndex = '1001';
+            invasion.style.fontSize = '3rem';
+            invasion.style.animation = 'fadeIn 1s';
+            invasion.innerHTML = '👽 WE COME IN PEACE (TO RUIN) 👽';
+            document.body.appendChild(invasion);
+            
+            setTimeout(() => {
+                invasion.remove();
+            }, 3000);
+        }
+
+        // ========== UI UPDATES ==========
+        function updateUI() {
+            clickCountEl.textContent = clicks;
+            regretScoreEl.textContent = regretScore;
+            userScoreEl.textContent = `${clicks} clicks`;
+            
+            // Update rank
+            let currentRank = ranks[0];
+            let nextRank = ranks[1];
+            
+            for (let i = ranks.length - 1; i >= 0; i--) {
+                if (clicks >= ranks[i].clicks) {
+                    currentRank = ranks[i];
+                    nextRank = ranks[i + 1] || ranks[i];
+                    break;
+                }
+            }
+            
+            currentRankEl.textContent = currentRank.name;
+            if (nextRank) {
+                nextRankEl.textContent = `Next: ${nextRank.name} (${nextRank.clicks} clicks)`;
+                const progress = Math.min(100, ((clicks - currentRank.clicks) / (nextRank.clicks - currentRank.clicks)) * 100);
+                rankProgressBar.style.width = `${progress}%`;
+            }
+            
+            // Update button text based on clicks
+            const buttonTexts = [
+                "RUIN EVERYTHING",
+                "RUIN HARDER",
+                "MAKE IT WORSE",
+                "CAUSE CHAOS",
+                "BREAK REALITY",
+                "DESTROY ALL HOPE"
+            ];
+            const textIndex = Math.min(Math.floor(clicks / 20), buttonTexts.length - 1);
+            ruinBtn.innerHTML = `<i class="fas fa-bomb"></i> ${buttonTexts[textIndex]} <i class="fas fa-bomb"></i>`;
+            
+            // Show easter egg button if unlocked
+            if (easterEggUnlocked) {
+                document.getElementById('easterEggBtn').style.display = 'flex';
+            }
+        }
+
+        function startTimer() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const hours = Math.floor(elapsed / 3600);
+                const minutes = Math.floor((elapsed % 3600) / 60);
+                const seconds = elapsed % 60;
+                timeActiveEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const color = type === 'warning' ? 'var(--warning)' : 'var(--secondary)';
+            
+            logEntry.innerHTML = `
+                <span class="log-time" style="color: ${color}">[${time}]</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            effectsLog.prepend(logEntry);
+            
+            // Limit log entries
+            while (effectsLog.children.length > 20) {
+                effectsLog.removeChild(effectsLog.lastChild);
+            }
+            
+            // Auto-scroll to top
+            effectsLog.scrollTop = 0;
+        }
+
+        // ========== SHARING & EVIDENCE ==========
+        function generateEvidence() {
+            const evidenceBtn = document.getElementById('evidenceBtn');
+            evidenceBtn.disabled = true;
+            evidenceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturing Chaos...';
+            
+            // Create share text
+            const shareText = `I ruined the world ${clicks} times with a regret score of ${regretScore}! I achieved the rank "${currentRankEl.textContent}". Can you do worse? #WorldRuiner3000`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareText).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+            
+            // Take screenshot
+            html2canvas(document.querySelector('.container')).then(canvas => {
+                // Add watermark
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(10, canvas.height - 50, 400, 30);
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Courier New';
+                ctx.fillText(`World Ruiner 3000 PRO MAX • ${clicks} clicks • ${currentRankEl.textContent}`, 20, canvas.height - 30);
+                
+                // Download image
+                const link = document.createElement('a');
+                link.download = `world-ruiner-evidence-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                
+                // Show modal
+                showModal('evidenceModal');
+                
+                evidenceBtn.disabled = false;
+                evidenceBtn.innerHTML = '<i class="fas fa-camera"></i> Generate Evidence';
+                
+                addLogEntry('Evidence generated and downloaded!', 'warning');
+            }).catch(err => {
+                console.error('Screenshot failed:', err);
+                evidenceBtn.disabled = false;
+                evidenceBtn.innerHTML = '<i class="fas fa-camera"></i> Generate Evidence';
+                addLogEntry('Evidence generation failed. Your chaos remains valid.', 'warning');
+            });
+        }
+
+        function shareToTwitter() {
+            const text = encodeURIComponent(`I ruined the world ${clicks} times with World Ruiner 3000 PRO MAX! Can you beat my regret score of ${regretScore}?`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        function copyShareText() {
+            const shareText = `🌍 WORLD RUINER 3000 PRO MAX 🌍\nI caused ${clicks} clicks of chaos with a regret score of ${regretScore}!\nAchieved rank: ${currentRankEl.textContent}\nBeat my score: ${window.location.href}`;
+            
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Share text copied to clipboard!');
+            });
+        }
+
+        // ========== LEADERBOARD ==========
+        function showLeaderboard() {
+            // In a real implementation, this would fetch from a server
+            // For now, we'll simulate with local storage
+            let leaderboard = JSON.parse(localStorage.getItem('worldRuinerLeaderboard')) || [];
+            
+            // Add current user if not already there
+            const userEntry = {
+                name: 'You',
+                clicks: clicks,
+                regretScore: regretScore,
+                rank: currentRankEl.textContent,
+                timestamp: Date.now()
+            };
+            
+            // Find if user already exists
+            const userIndex = leaderboard.findIndex(entry => entry.name === 'You');
+            if (userIndex !== -1) {
+                leaderboard[userIndex] = userEntry;
+            } else {
+                leaderboard.push(userEntry);
+            }
+            
+            // Sort by clicks
+            leaderboard.sort((a, b) => b.clicks - a.clicks);
+            
+            // Update modal display
+            const leaderboardHTML = leaderboard.slice(0, 10).map((entry, index) => `
+                <div class="leaderboard-entry">
+                    <span>${index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : '👤'} ${entry.name}</span>
+                    <span>${entry.clicks} clicks (${entry.regretScore} regret)</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('globalLeaderboard').innerHTML = leaderboardHTML;
+            showModal('leaderboardModal');
+            
+            // Save updated leaderboard
+            localStorage.setItem('worldRuinerLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function submitScore() {
+            const userName = prompt('Enter your name for the leaderboard:', 'Anonymous Ruiner');
+            if (userName) {
+                let leaderboard = JSON.parse(localStorage.getItem('worldRuinerLeaderboard')) || [];
+                leaderboard.push({
+                    name: userName.substring(0, 20),
+                    clicks: clicks,
+                    regretScore: regretScore,
+                    rank: currentRankEl.textContent,
+                    timestamp: Date.now()
+                });
+                
+                localStorage.setItem('worldRuinerLeaderboard', JSON.stringify(leaderboard));
+                addLogEntry(`Score submitted as "${userName}"!`, 'warning');
+            }
+        }
+
+        // ========== EASTER EGG ==========
+        function unlockEasterEgg() {
+            if (!easterEggUnlocked) {
+                easterEggUnlocked = true;
+                addLogEntry('🎉 EASTER EGG UNLOCKED: Secret chaos mode activated! 🎉', 'warning');
+                
+                // Change background to something ridiculous
+                document.body.style.background = 'linear-gradient(135deg, #ff00ff 0%, #00ffff 100%)';
+                
+                // Spawn rainbow confetti
+                confetti({
+                    particleCount: 300,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+                });
+                confetti({
+                    particleCount: 300,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+                });
+                
+                saveState();
+            }
+        }
+
+        function activateEasterEgg() {
+            if (easterEggUnlocked) {
+                // Easter egg mode: every click does 10x damage
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        clicks++;
+                        regretScore += 10;
+                        updateUI();
+                        
+                        // Spawn random emojis
+                        const emojis = ['💥', '🔥', '💀', '👾', '🤯', '🌀', '🌪️', '⚡'];
+                        const emoji = document.createElement('div');
+                        emoji.style.position = 'fixed';
+                        emoji.style.left = `${Math.random() * 90 + 5}%`;
+                        emoji.style.top = `${Math.random() * 90 + 5}%`;
+                        emoji.style.fontSize = `${Math.random() * 40 + 20}px`;
+                        emoji.style.zIndex = '1000';
+                        emoji.style.pointerEvents = 'none';
+                        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        document.body.appendChild(emoji);
+                        
+                        setTimeout(() => {
+                            emoji.remove();
+                        }, 2000);
+                    }, i * 100);
+                }
+                
+                addLogEntry('⚡ SECRET MODE: ULTRA CHAOS ENGAGED! ⚡', 'warning');
+            }
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function resetEverything() {
+            if (confirm('Are you sure? This will reset all your chaos and regret!')) {
+                clicks = 0;
+                regretScore = 0;
+                unlockedEffects = [];
+                startTime = Date.now();
+                updateUI();
+                addLogEntry('Everything has been reset. The world forgives you... for now.', 'warning');
+                saveState();
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function saveState() {
+            const state = {
+                clicks,
+                regretScore,
+                unlockedEffects,
+                easterEggUnlocked,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('worldRuinerState', JSON.stringify(state));
+        }
+
+        function generateFriendLink() {
+            const link = `${window.location.origin}${window.location.pathname}?clicks=${clicks}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert(`Friend link copied! Send this to challenge someone to beat your ${clicks} clicks of chaos!`);
+            });
+        }
+
+        // ========== EVENT LISTENERS ==========
+        ruinBtn.addEventListener('click', ruinEverything);
+        document.getElementById('evidenceBtn').addEventListener('click', generateEvidence);
+        document.getElementById('shareBtn').addEventListener('click', generateFriendLink);
+        document.getElementById('leaderboardBtn').addEventListener('click', showLeaderboard);
+        document.getElementById('resetBtn').addEventListener('click', resetEverything);
+        document.getElementById('submitScoreBtn').addEventListener('click', submitScore);
+        document.getElementById('easterEggBtn').addEventListener('click', activateEasterEgg);
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
